@@ -64,18 +64,67 @@
  *   highlightCheapestChai(document);
  *   // => "cutting" (cheapest chai gets "cheapest" class)
  */
+
 export function updateChaiPrice(document, chaiType, newPrice) {
-  // Your code here
+  if (
+    typeof chaiType !== "string" ||
+    chaiType.length === 0 ||
+    typeof newPrice !== "number" ||
+    newPrice <= 0
+  ) {
+    return false;
+  }
+
+  const el = document.getElementById(`price-${chaiType}`);
+  if (!el) return false;
+
+  el.textContent = `₹${newPrice}`;
+  return true;
 }
 
 export function getChaiPrice(document, chaiType) {
-  // Your code here
+  const el = document.getElementById(`price-${chaiType}`);
+  if (!el) return null;
+
+  const text = el.textContent || "";
+  const num = parseInt(text.replace("₹", ""), 10);
+
+  return isNaN(num) ? null : num;
 }
 
 export function updateStallName(document, newName) {
-  // Your code here
+  if (typeof newName !== "string" || newName.length === 0) return null;
+
+  const el = document.querySelector(".stall-name");
+  if (!el) return null;
+
+  const oldName = el.textContent;
+  el.textContent = newName;
+
+  return oldName;
 }
 
 export function highlightCheapestChai(document) {
-  // Your code here
+  const nodes = document.querySelectorAll(".chai-price");
+  if (!nodes || nodes.length === 0) return null;
+
+  let cheapestEl = null;
+  let minPrice = Infinity;
+
+  nodes.forEach((el) => {
+    const price = parseInt(el.textContent.replace("₹", ""), 10);
+
+    if (!isNaN(price) && price < minPrice) {
+      minPrice = price;
+      cheapestEl = el;
+    }
+  });
+
+  if (!cheapestEl) return null;
+
+  nodes.forEach((el) => el.classList.remove("cheapest"));
+
+  cheapestEl.classList.add("cheapest");
+
+  return cheapestEl.getAttribute("data-chai");
 }
